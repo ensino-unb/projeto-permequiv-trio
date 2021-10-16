@@ -1,7 +1,10 @@
-Require Import PeanoNat List.
+(* Projeto LC1*)
+(* Alunos: Vincius Lima Passos / Marcelo Junqueira Ferreira / Davi de Moura Amaral *)
 
+Require Import PeanoNat List.
 Open Scope nat_scope.
 
+(* Definições*)
 
 Fixpoint insere (n:nat) (l: list nat) :=
   match l with
@@ -75,6 +78,8 @@ Proof.
   intro x.
   reflexivity.
 Qed.
+
+(* Questão 2 ----- *)
 
 Lemma permutation_nil: forall l, permutation nil l -> l = nil.
 Proof.
@@ -232,7 +237,9 @@ Qed.
 
 
 (** Questão 1 *)
+
 Lemma perm_to_permutation: forall l l', perm l l' -> permutation l l'.
+Proof.
   induction 1.
    -apply permutation_refl.
    -apply permutation_hd. apply IHperm.
@@ -244,7 +251,6 @@ Lemma perm_to_permutation: forall l l', perm l l' -> permutation l l'.
      +assumption.
 Qed.
 
-(** Questão 2 *)
 
 Lemma permutation_cons: forall n l l', permutation (n :: l) (n :: l') <-> permutation l l'.
 Proof.
@@ -278,18 +284,7 @@ Proof.
   apply num_oc_app.
 Qed.
 
-(** Atividade de frequência - aula 08 *)
-Lemma permutation_app_cons: forall l1 l2 a, permutation (l1 ++ a :: l2) (a :: l1 ++ l2).
-Proof.
-  induction l1.
-  - intros.
-    unfold permutation.
-    intros.
-    rewrite app_nil_l.
-    rewrite app_nil_l.
-    reflexivity.
-  - admit.
-Admitted.
+
   
 Lemma permutation_cons_num_oc: forall n l l', permutation (n :: l) l' -> exists x, num_oc  n l' = S x.
 Proof.
@@ -304,26 +299,46 @@ Proof.
 Qed.
 
 (** Questão 3 *)
+
 Lemma num_occ_cons: forall l x n, num_oc x l = S n -> exists l1 l2, l = l1 ++ x :: l2 /\ num_oc x (l1 ++ l2) = n.
 Proof.
-Admitted.
+  induction l.
+  -intros.
+    simpl in H.
+    inversion H.
+  -intros.
+    simpl in H.
+    destruct (x =? a) eqn: H1.
+    +specialize (IHl x n).
+      apply Nat.eqb_eq in H1.
+      rewrite H1.
+      exists nil.
+      exists l.
+      simpl.
+      rewrite H1 in H.
+      Search ( _ =  _).
+      apply eq_add_S in H.
+      split.
+      *reflexivity.
+      *assumption.
+    +apply IHl in H.
+      destruct H.
+      destruct H.
+      destruct H.
+      rewrite H.
+      exists (a :: x0).
+      exists x1.
+      split.
+      *reflexivity.
+      *simpl.
+        rewrite H1.
+        assumption.
+      Qed.
 
 (** Questão 4 *)
-Lemma perm_implies_Permutation: forall l l', perm l l' -> permutation l l'.
-Proof.
-  induction 1.
-  - apply permutation_refl.
-  - apply permutation_hd. assumption.
-  - apply permutation_trans with (y :: x :: l).
-    + apply permutation_2head.
-    + repeat apply permutation_hd.
-      apply IHperm.
-  - apply permutation_trans with l2; assumption.
-Qed.
-
-
 
 Lemma permutation_to_perm: forall l l', permutation l l' -> perm l l'.
+Proof.
   induction l.
    -intros l' H.
      apply permutation_nil in H. rewrite H. apply perm_refl.
@@ -340,9 +355,7 @@ Lemma permutation_to_perm: forall l l', permutation l l' -> perm l l'.
         apply perm_hd.
         apply IHl.
         assumption.
-      --apply Nat.eqb_neq in IHG.
-
-        
+      --  Admitted.
 
 Theorem perm_equiv: forall l l', perm l l' <-> permutation l l'.
 Proof.
