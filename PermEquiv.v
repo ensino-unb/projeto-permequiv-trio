@@ -1,5 +1,5 @@
 (* Projeto LC1*)
-(* Alunos: Vincius Lima Passos / Marcelo Junqueira Ferreira / Davi de Moura Amaral *)
+(* Alunos: Vincius Lima Passos (200028545) / Marcelo Junqueira Ferreira (200023624) / Davi de Moura Amaral (200016750) *)
 
 Require Import PeanoNat List.
 Open Scope nat_scope.
@@ -216,7 +216,8 @@ Proof.
     + apply perm_hd.
       apply IHl1.
 Qed.
- Lemma perm_insere: forall l x, perm (x :: l) (insere x l).
+
+Lemma perm_insere: forall l x, perm (x :: l) (insere x l).
  Proof.
    induction l.
    - intro x.
@@ -233,9 +234,6 @@ Qed.
          apply IHl.
 Qed.      
 
-
-
-
 (** Questão 1 *)
 
 Lemma perm_to_permutation: forall l l', perm l l' -> permutation l l'.
@@ -250,7 +248,6 @@ Proof.
      +assumption.
      +assumption.
 Qed.
-
 
 Lemma permutation_cons: forall n l l', permutation (n :: l) (n :: l') <-> permutation l l'.
 Proof.
@@ -284,8 +281,6 @@ Proof.
   apply num_oc_app.
 Qed.
 
-
-  
 Lemma permutation_cons_num_oc: forall n l l', permutation (n :: l) l' -> exists x, num_oc  n l' = S x.
 Proof.
   intros.
@@ -316,7 +311,6 @@ Proof.
       exists l.
       simpl.
       rewrite H1 in H.
-      Search ( _ =  _).
       apply eq_add_S in H.
       split.
       *reflexivity.
@@ -337,25 +331,33 @@ Proof.
 
 (** Questão 4 *)
 
+Lemma permutation_app_cons: forall l1 l2 a, permutation (a :: l1 ++ l2) (l1 ++ a :: l2). 
+Proof.
+  intros.
+  apply permutation_trans with (a :: l2 ++ l1). apply permutation_hd. apply permutation_comm_app.
+  unfold permutation. 
+  intros. 
+  apply num_oc_app with (l1:=(a::l2)).
+Qed.
+  
 Lemma permutation_to_perm: forall l l', permutation l l' -> perm l l'.
 Proof.
-  induction l.
-   -intros l' H.
-     apply permutation_nil in H. rewrite H. apply perm_refl.
-   -intro l'.
-     case l'.
-     +intro H.
-       apply permutation_sym in H. apply permutation_nil in H. rewrite H.
-       apply perm_refl.
-     +intros n l0 H.
-      case (a=?n) eqn:IHG.
-      --apply Nat.eqb_eq in IHG.
-        rewrite IHG in *.
-        apply permutation_hd_back in H.
-        apply perm_hd.
-        apply IHl.
-        assumption.
-      --  Admitted.
+  intro l1; elim l1.
+  intros.
+  apply permutation_nil in H. rewrite H.
+  apply perm_refl.
+  intros.
+  assert (H0' := H0); apply permutation_cons_num_oc in H0'. 
+  destruct H0'.
+  apply num_occ_cons in H1.
+  destruct H1. destruct H1. destruct H1. rewrite H1. 
+  apply perm_trans with (a :: x0 ++ x1).
+  - apply perm_hd. apply H. apply permutation_hd_back with (x:=a).
+    apply permutation_trans with l'.
+    -- assumption.
+    -- rewrite H1. apply permutation_sym. apply permutation_app_cons.
+  - apply perm_app_cons.
+Qed.
 
 Theorem perm_equiv: forall l l', perm l l' <-> permutation l l'.
 Proof.
