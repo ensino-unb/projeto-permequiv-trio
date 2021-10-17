@@ -80,7 +80,6 @@ Proof.
 Qed.
 
 (* Questão 2 ----- *)
-
 Lemma permutation_nil: forall l, permutation nil l -> l = nil.
 Proof.
   intro l.
@@ -342,21 +341,22 @@ Qed.
   
 Lemma permutation_to_perm: forall l l', permutation l l' -> perm l l'.
 Proof.
-  intro l1; elim l1.
-  intros.
-  apply permutation_nil in H. rewrite H.
-  apply perm_refl.
-  intros.
-  assert (H0' := H0); apply permutation_cons_num_oc in H0'. 
-  destruct H0'.
-  apply num_occ_cons in H1.
-  destruct H1. destruct H1. destruct H1. rewrite H1. 
-  apply perm_trans with (a :: x0 ++ x1).
-  - apply perm_hd. apply H. apply permutation_hd_back with (x:=a).
-    apply permutation_trans with l'.
-    -- assumption.
-    -- rewrite H1. apply permutation_sym. apply permutation_app_cons.
-  - apply perm_app_cons.
+  intro l.
+  elim l.
+  +intros.
+    apply permutation_nil in H. rewrite H.
+    apply perm_refl.
+  +intros.
+    assert (H0' := H0); apply permutation_cons_num_oc in H0'. 
+    destruct H0'.
+    apply num_occ_cons in H1.
+    destruct H1. destruct H1. destruct H1. rewrite H1. 
+    apply perm_trans with (a :: x0 ++ x1).
+    - apply perm_hd. apply H. apply permutation_hd_back with (x:=a).
+      apply permutation_trans with l'.
+      -- assumption.
+      -- rewrite H1. apply permutation_sym. apply permutation_app_cons.
+    - apply perm_app_cons.
 Qed.
 
 Theorem perm_equiv: forall l l', perm l l' <-> permutation l l'.
